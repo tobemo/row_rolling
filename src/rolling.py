@@ -26,7 +26,7 @@ def strided_indexing_roll_2d(
         raise ValueError("Array and roll values should have same length.")
 
     # reverse roll direction for compatibility with slicing
-    roll_values *= -1
+    roll_values = -roll_values
 
     # concatenate with self to handle wrap-around
     a_ext = np.concatenate((array, array[:, :-1]), axis=1)
@@ -69,16 +69,16 @@ def strided_indexing_roll_3d(
     # reverse roll direction for compatibility with slicing
     roll_values = -roll_values
 
+    # concatenate with self to handle wrap-around
+    # done along second axis
+    a_ext = np.concatenate((array, array[:, :-1, :]), axis=1)
+
     # shape
     n_columns = array.shape[1]
     depth = array.shape[2]
 
     # normalize roll values to ensure they are within bounds
     roll_values %= n_columns
-
-    # concatenate with self to handle wrap-around
-    # done along second axis
-    a_ext = np.concatenate((array, array[:, :-1, :]), axis=1)
 
     # combine the column and depth axes for sliding windows
     sliding_windows = view_as_windows(a_ext, (1, n_columns, depth))
